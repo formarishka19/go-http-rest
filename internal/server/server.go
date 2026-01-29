@@ -8,26 +8,22 @@ import (
 	"go-http-rest/internal/handlers"
 )
 
-type HttpServer struct {
-	Addr         string
-	Handler      *http.ServeMux
-	ErrorLog     *log.Logger
-	ReadTimeout  time.Duration
-	WriteTimeout time.Duration
-	IdleTimeout  time.Duration
+type Server struct {
+	logger *log.Logger
+	Srv    http.Server
 }
 
-func NewHttpServer(logger *log.Logger) *HttpServer {
+func NewHttpServer(logger *log.Logger) *Server {
 	mux := http.NewServeMux()
 	mux.HandleFunc("/upload", handlers.UploadHandler)
 	mux.HandleFunc("/", handlers.MainHandler)
-	server := new(HttpServer)
-	server.Addr = ":8080"
-	server.Handler = mux
-	server.ErrorLog = logger
-	server.ReadTimeout = 5 * time.Second
-	server.WriteTimeout = 10 * time.Second
-	server.IdleTimeout = 15 * time.Second
+	server := new(Server)
+	server.Srv.Addr = ":8080"
+	server.Srv.Handler = mux
+	server.Srv.ReadTimeout = 5 * time.Second
+	server.Srv.WriteTimeout = 10 * time.Second
+	server.Srv.IdleTimeout = 15 * time.Second
+	server.logger = logger
 
 	return server
 }

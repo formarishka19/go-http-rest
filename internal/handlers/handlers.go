@@ -18,17 +18,17 @@ const (
 
 func MainHandler(w http.ResponseWriter, r *http.Request) {
 
-	data, err := os.ReadFile(indexFile)
-	if err != nil {
-		log.Fatalf("unable to read file: %v", err)
-	}
-	w.Header().Set("Content-Type", replyHeader)
-	w.WriteHeader(http.StatusOK)
-	w.Write(data)
+	http.ServeFile(w, r, indexFile)
+
 }
 
 func UploadHandler(w http.ResponseWriter, r *http.Request) {
 
+	if r.Method != http.MethodPost {
+		http.Error(w, "only POST requests allowed", http.StatusBadRequest)
+		log.Printf("got not a POST request")
+		return
+	}
 	fileUploaded, _, err := r.FormFile(formFileField)
 	if err != nil {
 		http.Error(w, "Error parsing form data", http.StatusBadRequest)
